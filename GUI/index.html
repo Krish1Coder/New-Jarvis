@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jarvis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+      <div class="center">
+        <div class="bar-1"></div>
+        <div class="bar-2"></div>
+        <div class="bar-3"></div>
+      </div>
+      <div class="bottom">
+        <div class="btm-cont">
+            <textarea id="text" name="text" rows="1" cols="25"></textarea>
+            <button class="send"> <img src="{{ url_for('static', filename='send.png') }}" width="25px" /></button>
+            <button class="mic"> <img src="{{ url_for('static', filename='mic.png') }}" width="15px" /></button>
+        </div>
+      </div>
+      <div class="siri-wave"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='STT.js') }}"></script>
+    <script src="https://unpkg.com/siriwave/dist/siriwave.umd.min.js"></script>
+</body>
+</html>
