@@ -1,0 +1,10 @@
+requests
+json
+PIL
+base64
+google-generativeai
+pytz
+datetime
+groq
+io
+gunicorn
