@@ -1,6 +1,5 @@
 flask
 requests
-json
 PIL
 base64
 google-generativeai
