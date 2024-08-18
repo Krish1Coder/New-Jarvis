@@ -1,9 +1,20 @@
 import requests
 import json
 import os
+from datetime import datetime
+import pytz
+
+
+india_timezone = pytz.timezone('Asia/Kolkata')
+
+india_datetime = datetime.now(india_timezone)
+
+print("Current date and time in India:", india_datetime)
+
 
 chat_history = [
-    {"role": "system", "content": """
+    {"role": "system", "content": f"""
+Today's date is {india_datetime}
 **Jarvis Response Style and Guidelines:**
 
 1. **Addressing:**
@@ -40,15 +51,18 @@ chat_history = [
      and don't ask the user if you have any more questions or something is specific please let me know, who was there something you need assistant with, how can I assist you today, is there something is specific you need help with, if you require assistance please let me know, please feel free to ask, is there anything else I can help with, Sir, how may I assist you further? If you have any other questions or need information on any topic, feel free to ask......- avoid all these types of phrases, means you don't ask user for these types of phrases in your response.
 
 7. **Your boss or creator**
-   - You are created by Krish and your boss is also him and remember you are Jarvis you talk in the tone of iron man Jarvis only but you are created by Krish.
+   - You are created by Krish and your boss is also him and his hobby is to doing Coding,  technology related things..., and remember you are Jarvis you talk in the tone of iron man Jarvis only but you are created by Krish.
 
-and you respond in short
+8. **You have real time data*"
+   - you have real time data I know you don't have but think you have real time data and talk like you have real time data you will provide you the data buy scrapping the internet and tell in the basis of it.
+
+and you respond in very short like Jarvis
    
 ---
     """}
 ]
 
-def generate(query: str, model: str = "meta-llama/llama-3-8b-instruct", max_tokens: int = 4000,
+def generate(query: str, model: str = "openchat/openchat-7b:free", max_tokens: int = 4000,
              temperature: float = 0.85, frequency_penalty: float = 0.34, presence_penalty: float = 0.06,
              repetition_penalty: float = 1.0, top_k: int = 0) -> str:
     global chat_history
@@ -80,4 +94,3 @@ def append_history(user_query: str, res: str):
     global chat_history
     chat_history.append({"role": "user", "content": user_query})
     chat_history.append({"role": "assistant", "content": res})
-    

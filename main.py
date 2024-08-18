@@ -2,12 +2,23 @@ import os
 import base64
 import threading
 from flask import Flask, render_template, request, jsonify, send_from_directory
+from datetime import datetime
+import pytz
 from ENGINE.TTS import speak
 from BRAIN.AI.TEXT_API.Openrouter import generate, append_history
 from BRAIN.AI.TEXT_API.Groq import determine_query_type, get_web_info, generate_groq
 from BRAIN.AI.VISION.GEMINI_VISION import upload_image_and_get_response as vision
+#from BRAIN.AI.VISION.LLAVA_VISION import upload_image_and_get_response as vision
 
 app = Flask(__name__, template_folder='GUI', static_folder='GUI/static')
+
+india_timezone = pytz.timezone('Asia/Kolkata')
+
+# Get the current date and time in India
+india_datetime = datetime.now(india_timezone)
+
+print("Current date and time in India:", india_datetime)
+
 
 @app.route('/')
 def index():
@@ -46,9 +57,11 @@ def process_speech():
 
         if classification == "general":
             response_text = generate(user_input)
+            
 
         elif classification == "real-time":
-            format_data = generate_groq(f"Here is the query:\n{user_input}", system_prompt="format this query it has to search on the web, today is 2024 and you have to search from India and in 2024. like if user ask who win this IPL you response IPL 2024 results, Tell me the news you respose 'India's today news' and you have to only resposne the formatted query not any other text you are work is to only format the query so it will perfectly search on the web and don't respond any other text also don't respond in '',sir, all other things")
+            
+            format_data = generate_groq(f"Here is the query:\n{user_input}", system_prompt=f"Todays date is {india_datetime}, format this query it has to search on the web, today is 2024 and you have to search from India and in 2024. and if it is news then also add date to it like if user ask who win this IPL you response IPL 2024 results, Tell me the news you respose 'today 'date' news India' and you have to only resposne the formatted query not any other text you are work is to only format the query so it will perfectly search on the web and don't respond any other text also don't respond in '',sir, all other things")
             
             results = get_web_info(format_data)
             final_res = generate_groq(f"{results} \n\n\n These are search results you have to provide the answer of question given below in short\n\n{user_input}", system_prompt="Be short and concise.")
@@ -69,7 +82,7 @@ def process_speech():
 
         elif classification == "vision":
             response_text = "Analysing Sir..."
-            speak(response_text)
+            #speak(response_text)
             return jsonify(response=response_text, audio_file="")
 
         else:

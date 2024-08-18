@@ -10,6 +10,8 @@ flask = "^3.0.3"
 flask-cors = "^4.0.1"
 brain = "^0.1.5"
 logger = "^1.4"
+requests = "^2.32.3"
+pytz = "^2024.1"
 
 [tool.pyright]
 # https://github.com/microsoft/pyright/blob/main/docs/configuration.md

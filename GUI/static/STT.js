@@ -32,47 +32,83 @@ window.onload = function() {
         console.warn("Speech Recognition is not supported in this browser.");
     }
 
-    function handleUserInput(input) {
-        jarvis.style.display = "none";
-        if (!user) {
-            user = document.createElement("div");
-            user.classList.add("user");
-            container.appendChild(user);
+    function typingAnimation(element, text, speed = 50) {
+    let i = 0;
+    element.innerHTML = '';
+
+    function typeWriter() {
+        if (i < text.length) {
+            element.innerHTML += text.charAt(i);
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            i++;
+            setTimeout(typeWriter, speed);
         }
-        user.innerHTML = "You: " + input;
-        user.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-        fetch('/process_speech', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ text: input })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.response === "Analysing Sir...") {
-                captureImage(input);
-            } else {
-                user.innerHTML = "Jarvis: " + data.response;
-                user.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-                const audio = new Audio(data.audio_file);
-                audio.addEventListener('ended', () => {
-                    recognition.start();
-                });
-                audio.addEventListener('pause', () => {
-                    audio.src = ""; // Remove the source
-                    audio.load();
-                    recognition.start();
-                });
-                audio.play();
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
     }
+    typeWriter();
+    }
+    
+
+    function handleUserInput(input) {
+    jarvis.style.display = "none";
+    if (!user) {
+        user = document.createElement("div");
+        user.classList.add("user");
+        container.appendChild(user);
+    }
+
+    user.innerHTML = "You: " + input;
+    anime({
+        targets: user,
+        opacity: [0, 1],
+        translateY: [-10, 0],
+        easing: 'easeOutQuad',
+        duration: 500,
+        complete: function() {
+            user.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+
+    fetch('/process_speech', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ text: input })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.response === "Analysing Sir...") {
+            captureImage(input);
+        } else {
+            user.innerHTML = "Jarvis: " + data.response;
+            anime({
+                targets: user,
+                opacity: [0, 1],
+                translateY: [-10, 0],
+                easing: 'easeOutQuad',
+                duration: 500,
+                complete: function() {
+                    user.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    const audio = new Audio(data.audio_file);
+                    audio.addEventListener('ended', () => {
+                        recognition.start();
+                    });
+                    audio.addEventListener('pause', () => {
+                        audio.src = ""; // Remove the source
+                        audio.load();
+                        recognition.start();
+                    });
+                    audio.play();
+                }
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+    }
+    
 
     send.addEventListener("click", () => {
         let inputboxval = inputbox.value;
@@ -98,7 +134,7 @@ window.onload = function() {
                 user.classList.add("user");
                 container.appendChild(user);
             }
-            user.innerHTML = "Listening...";
+            typingAnimation(user, "Listening...");
 
             recognition.start();
             let siriWave = new SiriWave({
@@ -158,7 +194,7 @@ window.onload = function() {
                                     })
                                     .then(response => response.json())
                                     .then(data => {
-                                        user.innerHTML = "Jarvis: " + data.response;
+                                        typingAnimation(user, "Jarvis: " + data.response);
                                         user.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
                                         const audio = new Audio(data.audio_file);
