@@ -5,5 +5,5 @@ base64io==1.0.3
 google-generativeai==0.1.0
 pytz==2023.3
 datetime==5.1
-groq==1.0.4
+groq==0.11.0
 gunicorn==20.1.0
