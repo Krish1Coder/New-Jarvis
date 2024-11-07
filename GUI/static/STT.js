@@ -46,6 +46,41 @@ window.onload = function() {
     }
     typeWriter();
     }
+
+
+    function formatText(response) {
+    if (response.includes("```")) {
+        const parts = response.split(/```/);
+
+        for (let i = 0; i < parts.length; i++) {
+            if (i % 2 === 1) { 
+                const codeBlock = `
+                    <pre>
+                        <code>${parts[i].trim()}</code>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+                    </pre>`;
+                console.log("Code block with button:", codeBlock); // Debug log
+                parts[i] = codeBlock;
+            } else {
+                parts[i] = parts[i]
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/_(.*?)_/g, '<em>$1</em>')
+                    .replace(/~~(.*?)~~/g, '<del>$1</del>')
+                    .replace(/`([^`]+)`/g, '<code>$1</code>')
+                    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+            }
+        }
+
+        return parts.join('');
+    } else {
+        return response
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/_(.*?)_/g, '<em>$1</em>')
+            .replace(/~~(.*?)~~/g, '<del>$1</del>')
+            .replace(/`([^`]+)`/g, '<code>$1</code>')
+            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+    }
+    }
     
 
     function handleUserInput(input) {
